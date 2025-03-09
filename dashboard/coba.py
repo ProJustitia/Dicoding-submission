@@ -1,17 +1,15 @@
+import os
+import sys
+import subprocess
+
+
+subprocess.run([sys.executable, "-m", "pip", "install", "-r", "requirements.txt"])
+
+
 import streamlit as st
 import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
-
-
-
-
-
-
-
-
-
-
 
 
 df = pd.read_csv("day.csv")

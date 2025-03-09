@@ -1,11 +1,3 @@
-import os
-import sys
-import subprocess
-
-
-subprocess.run([sys.executable, "-m", "pip", "install", "-r", "requirements.txt"])
-
-
 import streamlit as st
 import pandas as pd
 import seaborn as sns
@@ -46,9 +38,9 @@ elif option == "Histogram Peminjaman":
 
 elif option == "Heatmap Korelasi":
     st.subheader("Heatmap Korelasi Faktor Cuaca dengan Peminjaman Sepeda")
-    df_numeric = df.select_dtypes(include=["number"]).dropna()
+    num = df.select_dtypes(include=["number"]).dropna()
     fig, ax = plt.subplots(figsize=(8, 6))
-    sns.heatmap(df_numeric.corr(), annot=True, cmap="coolwarm", fmt=".2f", ax=ax)
+    sns.heatmap(num.corr(), annot=True, cmap="coolwarm", fmt=".2f", ax=ax)
     st.pyplot(fig)
 
 

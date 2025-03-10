@@ -1,3 +1,11 @@
+import os
+import subprocess
+import sys
+
+
+subprocess.run([sys.executable, "-m", "pip", "install", "numpy", "pandas", "matplotlib", "seaborn"])
+
+
 import streamlit as st
 import pandas as pd
 import seaborn as sns

@@ -23,10 +23,10 @@ st.write("Visualisasi data peminjaman sepeda berdasarkan faktor cuaca dan waktu.
 
 
 st.sidebar.header("Pilih Visualisasi")
-option = st.sidebar.selectbox("Pilih Grafik", ["Boxplot Musim", "Histogram Peminjaman", "Heatmap Korelasi"])
+opsi = st.sidebar.selectbox("Pilih Grafik", ["Boxplot Musim", "Histogram Peminjaman", "Heatmap Korelasi"])
 
 
-if option == "Boxplot Musim":
+if opsi == "Boxplot Musim":
     st.subheader("Boxplot Peminjaman Sepeda Berdasarkan Musim")
     fig, ax = plt.subplots(figsize=(8, 5))
     sns.boxplot(x=df["season"], y=df["cnt"], ax=ax)
@@ -35,7 +35,7 @@ if option == "Boxplot Musim":
     st.pyplot(fig)
 
 
-elif option == "Histogram Peminjaman":
+elif opsi == "Histogram Peminjaman":
     st.subheader("Histogram Distribusi Jumlah Peminjaman Sepeda")
     fig, ax = plt.subplots(figsize=(8, 5))
     sns.histplot(df["cnt"], bins=30, kde=True, color="skyblue", ax=ax)
@@ -44,7 +44,7 @@ elif option == "Histogram Peminjaman":
     st.pyplot(fig)
 
 
-elif option == "Heatmap Korelasi":
+elif opsi == "Heatmap Korelasi":
     st.subheader("Heatmap Korelasi Faktor Cuaca dengan Peminjaman Sepeda")
     num = df.select_dtypes(include=["number"]).dropna()
     fig, ax = plt.subplots(figsize=(8, 6))

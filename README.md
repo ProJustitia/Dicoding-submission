@@ -20,3 +20,4 @@ pip install -r requirements.txt
 ```
 streamlit run dashboard.py
 ```
+## Dashboard hanya menampilkan diagram

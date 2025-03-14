@@ -1,55 +1,51 @@
-import os
-import subprocess
-import sys
-
-
-subprocess.run([sys.executable, "-m", "pip", "install", "numpy", "pandas", "matplotlib", "seaborn"])
-
-
 import streamlit as st
 import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
 
+# Load dataset
+@st.cache_data
+def load_data():
+    df = pd.read_csv("day.csv")  # Ganti dengan nama file dataset
+    df["season"] = df["season"].astype("category")
+    df["weathersit"] = df["weathersit"].astype("category")
+    return df
 
-df = pd.read_csv("day.csv")
-df.drop(columns=["instant"], inplace=True)
-df["season"] = df["season"].astype("category")
-df["weathersit"] = df["weathersit"].astype("category")
+df = load_data()
+
+# Judul Dashboard
+st.title("Dashboard Bike Sharing 🚴")
+
+# Sidebar untuk Filter
+st.sidebar.header("Filter Data")
+season_options = {1: "Musim semi", 2: "Musim Panas", 3: "Musim Gugur", 4: "Musim Dingin"}
+selected_season = st.sidebar.selectbox("Pilih Musim:", list(season_options.keys()), format_func=lambda x: season_options[x])
+working_day = st.sidebar.checkbox("Tampilkan hanya hari kerja")
+
+# Filter data berdasarkan pilihan
+filtered_df = df[df["season"] == selected_season]
+if working_day:
+    filtered_df = filtered_df[filtered_df["workingday"] == 1]
+
+# **Visualisasi 1: Scatter Plot Hubungan Suhu dan Peminjaman**
+st.subheader("Hubungan Suhu dengan Peminjaman Sepeda")
+fig, ax = plt.subplots(figsize=(10, 5))
+sns.scatterplot(x="temp", y="cnt", data=filtered_df, alpha=0.5, ax=ax)
+ax.set_xlabel("Suhu Normalisasi")
+ax.set_ylabel("Jumlah Peminjaman Sepeda")
+st.pyplot(fig)
+
+# **Visualisasi 2: Bar Plot Peminjaman Sepeda Berdasarkan Musim**
+st.subheader("Distribusi Peminjaman Sepeda Berdasarkan Musim")
+season_counts = df.groupby("season")["cnt"].mean()
+fig, ax = plt.subplots(figsize=(8, 4))
+sns.barplot(x=season_counts.index, y=season_counts.values, ax=ax)
+ax.set_xticklabels([season_options[i] for i in season_counts.index])
+ax.set_xlabel("Musim")
+ax.set_ylabel("Rata-rata Peminjaman Sepeda")
+st.pyplot(fig)
+
+# Tambahan informasi
+st.write("Gunakan sidebar untuk memilih musim dan filter hari kerja.")
 
 
-st.title("📊 Dashboard Peminjaman Sepeda")
-st.write("Visualisasi data peminjaman sepeda berdasarkan faktor cuaca dan waktu.")
-
-
-st.sidebar.header("Pilih Visualisasi")
-opsi = st.sidebar.selectbox("Pilih Grafik", ["Boxplot Musim", "Histogram Peminjaman", "Heatmap Korelasi"])
-
-
-if opsi == "Boxplot Musim":
-    st.subheader("Boxplot Peminjaman Sepeda Berdasarkan Musim")
-    fig, ax = plt.subplots(figsize=(8, 5))
-    sns.boxplot(x=df["season"], y=df["cnt"], ax=ax)
-    ax.set_xlabel("Musim")
-    ax.set_ylabel("Jumlah Peminjaman")
-    st.pyplot(fig)
-
-
-elif opsi == "Histogram Peminjaman":
-    st.subheader("Histogram Distribusi Jumlah Peminjaman Sepeda")
-    fig, ax = plt.subplots(figsize=(8, 5))
-    sns.histplot(df["cnt"], bins=30, kde=True, color="skyblue", ax=ax)
-    ax.set_xlabel("Jumlah Peminjaman")
-    ax.set_ylabel("Frekuensi")
-    st.pyplot(fig)
-
-
-elif opsi == "Heatmap Korelasi":
-    st.subheader("Heatmap Korelasi Faktor Cuaca dengan Peminjaman Sepeda")
-    num = df.select_dtypes(include=["number"]).dropna()
-    fig, ax = plt.subplots(figsize=(8, 6))
-    sns.heatmap(num.corr(), annot=True, cmap="coolwarm", fmt=".2f", ax=ax)
-    st.pyplot(fig)
-
-
-st.write("Data diambil dari dataset Bike Sharing.")

@@ -9,6 +9,7 @@ def load_data():
     df = pd.read_csv("day.csv")  # Ganti dengan nama file dataset
     df["season"] = df["season"].astype("category")
     df["weathersit"] = df["weathersit"].astype("category")
+    df["dteday"] = pd.to_datetime(df["dteday"])  # Konversi tanggal
     return df
 
 df = load_data()
@@ -31,7 +32,16 @@ else:
 if working_day:
     filtered_df = filtered_df[filtered_df["workingday"] == 1]
 
-# **Visualisasi 1: Scatter Plot Hubungan Suhu dan Peminjaman**
+# **Visualisasi 1: Tren Peminjaman Sepeda dalam Setahun**
+st.subheader("Tren Peminjaman Sepeda dalam Setahun")
+fig, ax = plt.subplots(figsize=(15, 5))
+sns.lineplot(x="dteday", y="cnt", data=filtered_df, ax=ax)
+ax.set_xlabel("Tanggal")
+ax.set_ylabel("Jumlah Peminjaman Sepeda")
+ax.set_title("Tren Peminjaman Sepeda Sepanjang Tahun")
+st.pyplot(fig)
+
+# **Visualisasi 2: Scatter Plot Hubungan Suhu dan Peminjaman**
 st.subheader("Hubungan Suhu dengan Peminjaman Sepeda")
 fig, ax = plt.subplots(figsize=(10, 5))
 sns.scatterplot(x="temp", y="cnt", data=filtered_df, alpha=0.5, ax=ax)
@@ -39,9 +49,9 @@ ax.set_xlabel("Suhu Normalisasi")
 ax.set_ylabel("Jumlah Peminjaman Sepeda")
 st.pyplot(fig)
 
-# **Visualisasi 2: Bar Plot Peminjaman Sepeda Berdasarkan Musim**
+# **Visualisasi 3: Bar Plot Peminjaman Sepeda Berdasarkan Musim**
 st.subheader("Distribusi Peminjaman Sepeda Berdasarkan Musim")
-season_counts = df.groupby("season")["cnt"].mean()
+season_counts = filtered_df.groupby("season")["cnt"].mean()
 fig, ax = plt.subplots(figsize=(8, 4))
 sns.barplot(x=season_counts.index, y=season_counts.values, ax=ax)
 ax.set_xticklabels([season_options[i] for i in season_counts.index])
